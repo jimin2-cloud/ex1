@@ -3,155 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>카트라이더 팀 매칭 시스템</title>
+    <title>소환사의 협곡 밸런스 매처</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f0f4f8; /* 연한 블루 그레이 배경 */
-            color: #2d3748;
+            background-color: #091428; /* 롤 클라이언트 배경색 */
+            color: #f0e6d2; /* 롤 골드 텍스트색 */
+            background-image: radial-gradient(circle at center, #0a1428 0%, #050b13 100%);
         }
-        .main-container {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        .lol-panel {
+            background: rgba(1, 10, 19, 0.9);
+            border: 1px solid #1e2328;
+            box-shadow: inset 0 0 20px rgba(190, 155, 95, 0.1);
         }
-        .input-area {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
+        .lol-input {
+            background: #010a13;
+            border: 1px solid #3c3c41;
+            color: #f0e6d2;
+            transition: all 0.3s;
         }
-        .input-area:focus-within {
-            border-color: #3b82f6;
-            background: white;
+        .lol-input:focus {
+            border-color: #c89b3c; /* 롤 골드 포인트 */
+            box-shadow: 0 0 10px rgba(200, 155, 60, 0.3);
         }
-        .btn-primary {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            transition: all 0.2s ease;
+        .btn-lol {
+            background: #1e2328;
+            border: 1px solid #c8aa6e;
+            color: #c8aa6e;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.2s;
         }
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        .btn-lol:hover {
+            background: #c8aa6e;
+            color: #010a13;
+            box-shadow: 0 0 15px rgba(200, 170, 110, 0.5);
         }
-        .team-box {
-            transition: all 0.3s ease;
-            border-width: 2px;
+        .blue-gradient { background: linear-gradient(90deg, #1f2328 0%, #0ac8b9 100%); }
+        .red-gradient { background: linear-gradient(90deg, #ee5a52 0%, #1f2328 100%); }
+        
+        @keyframes lane-slide {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
         }
-        /* 애니메이션 */
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-up {
-            animation: slideUp 0.4s ease-out forwards;
-        }
+        .animate-lane { animation: lane-slide 0.3s ease-out forwards; }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen p-6 md:p-12">
+<body class="flex flex-col items-center justify-start min-h-screen p-4 md:p-12">
 
-    <div class="w-full max-w-4xl text-center mb-8">
-        <h1 class="text-3xl md:text-4xl font-bold text-slate-800 tracking-tight">
-            🏎️ 라이벌 팀 매칭
+    <div class="text-center mb-12">
+        <div class="flex justify-center mb-4">
+            <div class="w-16 h-1px bg-[#c8aa6e] self-center"></div>
+            <span class="px-4 text-[#c8aa6e] text-xs font-bold tracking-[0.3em]">MATCHMAKING SYSTEM</span>
+            <div class="w-16 h-1px bg-[#c8aa6e] self-center"></div>
+        </div>
+        <h1 class="text-5xl font-black italic tracking-tighter text-[#f0e6d2] mb-2" style="text-shadow: 0 0 20px rgba(240, 230, 210, 0.2);">
+            내전 매칭 시스템
         </h1>
-        <p class="text-slate-500 mt-2 font-medium">실력이 비슷한 라이벌끼리 묶어서 공평한 팀을 만듭니다.</p>
+        <p class="text-[#a09b8c] text-sm font-medium">실력이 비슷한 소환사들을 각 팀으로 배치합니다.</p>
     </div>
 
-    <div class="w-full max-w-4xl main-container p-6 md:p-10">
-        <div class="mb-10">
-            <label class="block text-sm font-bold text-slate-700 mb-3 ml-1">라이벌 대진표 (이름:이름, 이름:이름...)</label>
-            <div class="input-area rounded-2xl p-2 flex flex-col md:flex-row gap-3">
+    <div class="w-full max-w-5xl flex flex-col gap-10">
+        
+        <div class="lol-panel rounded-sm p-6 border-t-2 border-t-[#c8aa6e]">
+            <div class="flex flex-col gap-5">
+                <div class="flex items-center gap-2">
+                    <div class="w-1 h-4 bg-[#c8aa6e]"></div>
+                    <label class="text-sm font-bold text-[#c8aa6e] uppercase tracking-widest">라이벌 명단 (TOP:TOP, JUNG:JUNG...)</label>
+                </div>
                 <textarea id="name-input" rows="2" 
-                    class="flex-grow bg-transparent border-none focus:ring-0 p-3 text-slate-700 placeholder-slate-400 font-medium"
-                    placeholder="다오:배찌, 마리드:우니, 디지니:에띠, 모스:케피, 타키:라비">다오:배찌, 마리드:우니, 디지니:에띠, 모스:케피, 타키:라비</textarea>
+                    class="lol-input w-full p-4 rounded-sm focus:outline-none font-medium text-lg"
+                    placeholder="라이벌1:라이벌2, 라이벌3:라이벌4...">상대1:상대2, 상대3:상대4, 상대5:상대6, 상대7:상대8, 상대9:상대10</textarea>
+                
                 <button onclick="generateTeams()" 
-                    class="btn-primary text-white font-bold px-8 py-4 rounded-xl whitespace-nowrap">
-                    팀 나누기
+                    class="btn-lol w-full py-4 font-black text-xl italic">
+                    팀 생성 시작
                 </button>
             </div>
-            <p class="text-[12px] text-slate-400 mt-3 ml-1 italic">* 콜론(:)으로 묶인 두 명은 반드시 서로 다른 팀이 됩니다.</p>
         </div>
 
-        <div id="result-panel" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div id="result-panel" class="hidden grid grid-cols-1 md:grid-cols-2 gap-0 border border-[#1e2328]">
             
-            <div class="team-box bg-blue-50 border-blue-100 rounded-2xl overflow-hidden animate-up">
-                <div class="bg-blue-500 px-6 py-3 flex justify-between items-center text-white">
-                    <span class="font-bold tracking-wider">TEAM BLUE</span>
-                    <span class="text-xs bg-blue-600/30 px-2 py-1 rounded">5 RIDERS</span>
+            <div class="bg-[#010a13] p-6 border-r border-[#1e2328]">
+                <div class="flex items-center justify-between mb-8 border-b border-[#0ac8b9]/30 pb-4">
+                    <h3 class="text-3xl font-black italic text-[#0ac8b9]">BLUE SIDE</h3>
+                    <div class="text-[10px] text-[#0ac8b9] font-bold border border-[#0ac8b9] px-2 py-0.5">VICTORY</div>
                 </div>
-                <ul id="team-a" class="p-4 space-y-3"></ul>
+                <ul id="team-a" class="space-y-4"></ul>
             </div>
 
-            <div class="team-box bg-red-50 border-red-100 rounded-2xl overflow-hidden animate-up" style="animation-delay: 0.1s;">
-                <div class="bg-red-500 px-6 py-3 flex justify-between items-center text-white">
-                    <span class="font-bold tracking-wider">TEAM RED</span>
-                    <span class="text-xs bg-red-600/30 px-2 py-1 rounded">5 RIDERS</span>
+            <div class="bg-[#010a13] p-6">
+                <div class="flex items-center justify-between mb-8 border-b border-[#ee5a52]/30 pb-4">
+                    <div class="text-[10px] text-[#ee5a52] font-bold border border-[#ee5a52] px-2 py-0.5">DEFEAT</div>
+                    <h3 class="text-3xl font-black italic text-[#ee5a52]">RED SIDE</h3>
                 </div>
-                <ul id="team-b" class="p-4 space-y-3"></ul>
+                <ul id="team-b" class="space-y-4 text-right"></ul>
             </div>
 
         </div>
 
-        <div id="no-result" class="py-20 text-center border-2 border-dashed border-slate-200 rounded-2xl text-slate-400">
-            <p class="font-medium">준비된 라이벌 명단을 입력하고 버튼을 눌러주세요.</p>
+        <div id="no-result" class="lol-panel py-20 text-center flex flex-col items-center justify-center">
+            <div class="w-12 h-12 border-2 border-[#c8aa6e]/20 rounded-full mb-4 flex items-center justify-center">
+                <div class="w-2 h-2 bg-[#c8aa6e] rounded-full animate-ping"></div>
+            </div>
+            <p class="text-[#a09b8c] font-bold tracking-widest uppercase text-xs">수락 대기 중...</p>
         </div>
+
     </div>
 
-    <footer class="mt-10 text-slate-400 text-xs">
-        &copy; 2026 Jimin2-Cloud Matchmaker
+    <footer class="mt-20 text-[#5b5a56] text-[10px] tracking-[0.2em] font-bold">
+        SUMMONER'S RIFT TEAM BALANCER &copy; 2026
     </footer>
 
     <script>
         function generateTeams() {
             const input = document.getElementById('name-input').value;
-            const pairList = input.split(',').map(p => p.trim()).filter(p => p !== "");
+            const pairs = input.split(',').map(p => p.trim()).filter(p => p !== "");
 
-            if (pairList.length !== 5) {
-                alert("정확히 5쌍(10명)의 데이터가 필요합니다!");
+            if (pairs.length !== 5) {
+                alert("정확히 5쌍(10명)의 소환사가 필요합니다.");
                 return;
             }
 
             let teamA = [];
             let teamB = [];
+            const positions = ['TOP', 'JUNGLE', 'MID', 'AD CARRY', 'SUPPORT'];
 
-            try {
-                pairList.forEach(pairStr => {
-                    const members = pairStr.split(':').map(m => m.trim());
-                    if (members.length !== 2) throw new Error("형식 오류: 이름:이름");
+            pairs.forEach((pairStr, index) => {
+                const members = pairStr.split(':').map(m => m.trim());
+                const pos = positions[index];
 
-                    if (Math.random() < 0.5) {
-                        teamA.push({ name: members[0], rival: members[1] });
-                        teamB.push({ name: members[1], rival: members[0] });
-                    } else {
-                        teamA.push({ name: members[1], rival: members[0] });
-                        teamB.push({ name: members[0], rival: members[1] });
-                    }
-                });
+                if (Math.random() < 0.5) {
+                    teamA.push({ name: members[0], rival: members[1], pos: pos });
+                    teamB.push({ name: members[1], rival: members[0], pos: pos });
+                } else {
+                    teamA.push({ name: members[1], rival: members[0], pos: pos });
+                    teamB.push({ name: members[0], rival: members[1], pos: pos });
+                }
+            });
 
-                teamA.sort(() => Math.random() - 0.5);
-                teamB.sort(() => Math.random() - 0.5);
+            document.getElementById('no-result').classList.add('hidden');
+            document.getElementById('result-panel').classList.remove('hidden');
 
-                document.getElementById('no-result').classList.add('hidden');
-                document.getElementById('result-panel').classList.remove('hidden');
-
-                renderList('team-a', teamA, 'text-blue-700', 'bg-blue-400');
-                renderList('team-b', teamB, 'text-red-700', 'bg-red-400');
-
-            } catch (e) {
-                alert("입력 형식을 확인해주세요 (예: 이름:이름)");
-            }
+            renderSide('team-a', teamA, 'blue');
+            renderSide('team-b', teamB, 'red');
         }
 
-        function renderList(elementId, members, textColor, bulletColor) {
+        function renderSide(elementId, members, side) {
             const el = document.getElementById(elementId);
-            el.innerHTML = members.map((m, index) => `
-                <li class="flex flex-col bg-white/60 p-3 rounded-xl border border-white shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <span class="text-[10px] font-bold text-slate-300 w-4">${index + 1}</span>
-                        <div class="w-1.5 h-1.5 rounded-full ${bulletColor}"></div>
-                        <span class="font-bold ${textColor}">${m.name}</span>
+            const isBlue = side === 'blue';
+
+            el.innerHTML = members.map((m, i) => `
+                <li class="animate-lane flex ${isBlue ? 'flex-row' : 'flex-row-reverse'} items-center gap-4 group" style="animation-delay: ${i*0.1}s">
+                    <div class="w-10 h-10 bg-[#1e2328] border border-[#c8aa6e]/30 flex items-center justify-center text-[10px] font-bold text-[#c8aa6e]">
+                        ${m.pos[0]}
                     </div>
-                    <div class="text-[10px] text-slate-400 ml-8 mt-1 font-medium">
-                        라이벌: ${m.rival}
+                    <div class="flex flex-col ${isBlue ? 'items-start' : 'items-end'}">
+                        <span class="text-xl font-black ${isBlue ? 'text-[#f0e6d2]' : 'text-[#f0e6d2]'} group-hover:text-white transition-colors">
+                            ${m.name}
+                        </span>
+                        <span class="text-[9px] font-bold text-[#a09b8c] tracking-widest uppercase">
+                            vs ${m.rival}
+                        </span>
                     </div>
                 </li>
             `).join('');
