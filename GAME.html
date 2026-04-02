@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>카트라이더 팀 매칭 시스템</title>
+    <title>카트라이더 라이벌 매칭 시스템</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #0a0e17; /* 아주 어두운 파랑 (Cyberpunk base) */
+            background-color: #0a0e17;
             color: #e0e6ed;
         }
         .cyber-panel {
@@ -29,159 +29,132 @@
             box-shadow: 0 0 20px rgba(0, 242, 254, 0.8);
             transform: translateY(-2px);
         }
-        /* 팀 등장 애니메이션 */
         @keyframes fadeInScale {
-            0% { opacity: 0; transform: scale(0.9); }
+            0% { opacity: 0; transform: scale(0.95); }
             100% { opacity: 1; transform: scale(1); }
         }
         .team-card {
-            animation: fadeInScale 0.5s ease-out forwards;
+            animation: fadeInScale 0.4s ease-out forwards;
         }
-        .team-a-glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); border-color: #3b82f6; }
-        .team-b-glow { box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); border-color: #ef4444; }
+        .team-a-glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); border-color: #3b82f6; }
+        .team-b-glow { box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); border-color: #ef4444; }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4 md:p-8">
 
-    <div class="text-center mb-10 w-full max-w-4xl">
-        <div class="inline-block bg-blue-900/30 text-blue-300 text-xs px-3 py-1 rounded-full mb-2 border border-blue-800">
-            AUTO TEAM MATCHING v1.0
+    <div class="text-center mb-8 w-full max-w-4xl">
+        <div class="inline-block bg-blue-900/30 text-blue-300 text-xs px-3 py-1 rounded-full mb-2 border border-blue-800 uppercase tracking-widest">
+            Rival Balanced Matcher v2.0
         </div>
-        <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-500 tracking-tight">
-            카트 팀 매칭
+        <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-500">
+            라이벌 고정 매칭
         </h1>
-        <p class="text-gray-400 mt-2 text-lg">10명의 라이더를 입력하고 랜덤 팀을 구성하세요.</p>
+        <p class="text-gray-400 mt-2">상대팀으로 찢어놓을 라이벌끼리 콜론(:)으로 묶어주세요.</p>
     </div>
 
     <div class="w-full max-w-5xl flex flex-col gap-8">
-
         <div class="cyber-panel rounded-2xl p-6 md:p-8">
-            <div class="flex flex-col md:flex-row gap-6 items-start">
-                <div class="flex-grow w-full">
-                    <label for="name-input" class="block text-sm font-medium text-cyan-300 mb-2">라이더 명단 입력 (쉼표 구분)</label>
-                    <textarea id="name-input" rows="3" 
-                        class="neon-input w-full bg-[#0d131f] border border-gray-700 rounded-xl p-4 text-white placeholder-gray-600 focus:ring-0"
-                        placeholder="예: 다오, 배찌, 디지니, 마리드, 우니, 에띠, 모스, 케피, 타키, 라비">다오, 배찌, 디지니, 마리드, 우니, 에띠, 모스, 케피, 타키, 라비</textarea>
-                </div>
-                <div class="w-full md:w-auto md:self-end">
-                    <button onclick="generateTeams()" 
-                        class="neon-btn w-full md:w-auto text-black font-bold py-4 px-10 rounded-xl text-lg flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-1.912.956a11.963 11.963 0 01-4.212-4.212l.956-1.912a6 6 0 00.517-3.86l-.477-2.387a2 2 0 00-.547-1.022L12 11l7.428 4.428z"></path></svg>
-                        팀 구성하기
-                    </button>
-                </div>
+            <div class="flex flex-col gap-4">
+                <label for="name-input" class="block text-sm font-medium text-cyan-300">라이더 대진표 입력 (라이벌1:라이벌2 순서)</label>
+                <textarea id="name-input" rows="3" 
+                    class="neon-input w-full bg-[#0d131f] border border-gray-700 rounded-xl p-4 text-white placeholder-gray-600 focus:ring-0"
+                    placeholder="예: 다오:배찌, 마리드:우니, 디지니:에띠, 모스:케피, 타키:라비">다오:배찌, 마리드:우니, 디지니:에띠, 모스:케피, 타키:라비</textarea>
+                
+                <button onclick="generateTeams()" 
+                    class="neon-btn w-full text-black font-bold py-4 rounded-xl text-lg flex items-center justify-center gap-2">
+                    팀 나누기 (라이벌 찢기)
+                </button>
             </div>
-            <div id="status-msg" class="text-sm text-gray-500 mt-3 text-center md:text-left">현재 쉼표로 구분된 10명의 이름이 필요합니다.</div>
+            <div id="status-msg" class="text-xs text-gray-500 mt-4 leading-relaxed">
+                * 총 5쌍(10명)이 필요합니다. <br>
+                * 콜론(:)으로 연결된 두 명은 무조건 서로 반대 팀에 배치됩니다.
+            </div>
         </div>
 
         <div id="result-panel" class="hidden grid grid-cols-1 md:grid-cols-2 gap-8">
-            
             <div class="cyber-panel team-card team-a-glow rounded-2xl overflow-hidden">
                 <div class="bg-blue-600/20 px-6 py-4 border-b border-blue-900 flex items-center justify-between">
-                    <h3 class="text-2xl font-bold text-blue-300 tracking-wider">TEAM BLUE</h3>
-                    <span class="text-sm bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full border border-blue-800">5 RIDERS</span>
+                    <h3 class="text-2xl font-bold text-blue-400 italic">TEAM BLUE</h3>
                 </div>
-                <div class="p-6">
-                    <ul id="team-a" class="space-y-3 text-lg">
-                        </ul>
-                </div>
+                <ul id="team-a" class="p-6 space-y-3"></ul>
             </div>
 
-            <div class="cyber-panel team-card team-b-glow rounded-2xl overflow-hidden" style="animation-delay: 0.2s;">
+            <div class="cyber-panel team-card team-b-glow rounded-2xl overflow-hidden">
                 <div class="bg-red-600/20 px-6 py-4 border-b border-red-900 flex items-center justify-between">
-                    <h3 class="text-2xl font-bold text-red-300 tracking-wider">TEAM RED</h3>
-                    <span class="text-sm bg-red-500/20 text-red-300 px-3 py-1 rounded-full border border-red-800">5 RIDERS</span>
+                    <h3 class="text-2xl font-bold text-red-400 italic">TEAM RED</h3>
                 </div>
-                <div class="p-6">
-                    <ul id="team-b" class="space-y-3 text-lg">
-                        </ul>
-                </div>
+                <ul id="team-b" class="p-6 space-y-3"></ul>
             </div>
-
         </div>
 
-        <div id="no-result" class="cyber-panel rounded-2xl p-10 text-center text-gray-600">
-            <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            <p>라이더 이름을 입력하고 '팀 구성하기' 버튼을 누르면 매칭 결과가 여기에 표시됩니다.</p>
+        <div id="no-result" class="cyber-panel rounded-2xl p-10 text-center text-gray-600 border-dashed">
+            <p>라이벌 쌍을 입력하고 버튼을 누르세요.</p>
         </div>
-
     </div>
 
-    <footer class="mt-16 text-center text-gray-700 text-xs w-full max-w-4xl border-t border-gray-800 pt-6">
-        © 2026 Jimin2-Cloud Auto Matchmaker. Powered by 브라우저 자바스크립트.
-    </footer>
-
     <script>
-        // 폰트가 로드된 후 화면을 보여주기 위해 약간의 지연을 줍니다.
-        window.onload = function() {
-            // 초기 입력값 인원수 확인
-            checkCount();
-        }
-
-        // 입력할 때마다 인원수 체크
-        document.getElementById('name-input').addEventListener('input', checkCount);
-
-        function checkCount() {
+        function generateTeams() {
             const input = document.getElementById('name-input').value;
-            let names = input.split(',').map(name => name.trim()).filter(n => n !== "");
-            const msgEl = document.getElementById('status-msg');
-            
-            if (names.length === 10) {
-                msgEl.textContent = `현재 10명이 정확히 입력되었습니다! (OK)`;
-                msgEl.className = "text-sm text-green-400 mt-3";
-            } else {
-                msgEl.textContent = `현재 ${names.length}명 입력되었습니다. (10명이 필요합니다)`;
-                msgEl.className = "text-sm text-yellow-500 mt-3";
+            // 콤마로 쌍(Pair) 구분
+            const pairList = input.split(',').map(p => p.trim()).filter(p => p !== "");
+
+            if (pairList.length !== 5) {
+                alert("정확히 5쌍의 라이벌 정보가 필요합니다! (현재 " + pairList.length + "쌍)");
+                return;
+            }
+
+            let teamA = [];
+            let teamB = [];
+
+            try {
+                pairList.forEach(pairStr => {
+                    const members = pairStr.split(':').map(m => m.trim());
+                    
+                    if (members.length !== 2) {
+                        throw new Error("형식이 올바르지 않습니다. (이름:이름)");
+                    }
+
+                    // 50% 확률로 1번이 A팀 혹은 B팀으로 가고, 2번은 무조건 반대로 배치
+                    if (Math.random() < 0.5) {
+                        teamA.push({ name: members[0], rival: members[1] });
+                        teamB.push({ name: members[1], rival: members[0] });
+                    } else {
+                        teamA.push({ name: members[1], rival: members[0] });
+                        teamB.push({ name: members[0], rival: members[1] });
+                    }
+                });
+
+                // 팀 내부 순서만 랜덤하게 섞어줌 (시각적 재미)
+                teamA.sort(() => Math.random() - 0.5);
+                teamB.sort(() => Math.random() - 0.5);
+
+                // UI 업데이트
+                document.getElementById('no-result').classList.add('hidden');
+                document.getElementById('result-panel').classList.remove('hidden');
+
+                renderList('team-a', teamA, 'text-blue-300', 'bg-blue-500');
+                renderList('team-b', teamB, 'text-red-300', 'bg-red-500');
+
+            } catch (e) {
+                alert(e.message);
             }
         }
 
-        function generateTeams() {
-    const input = document.getElementById('name-input').value;
-    // 1. 이름을 가져오는데, 이번에는 콤마(,)뿐만 아니라 콜론(:)도 구분자로 쓸 수 있게 합니다.
-    let names = input.replace(/:/g, ',').split(',').map(name => name.trim()).filter(n => n !== "");
-
-    if (names.length !== 10) {
-        alert("정확히 10명(5쌍)을 입력해주세요! 현재: " + names.length + "명");
-        return;
-    }
-
-    let teamA = [];
-    let teamB = [];
-
-    // 2. 두 명씩(i, i+1) 짝을 지어 반복문을 돌립니다.
-    for (let i = 0; i < names.length; i += 2) {
-        const pair = [names[i], names[i+1]];
-        
-        // 3. 이 쌍 안에서 누가 A팀으로 갈지 랜덤하게 결정 (50% 확률)
-        if (Math.random() < 0.5) {
-            teamA.push(pair[0]);
-            teamB.push(pair[1]);
-        } else {
-            teamA.push(pair[1]);
-            teamB.push(pair[0]);
-        }
-    }
-
-    // 4. (선택사항) 팀 내부에서도 순서를 한 번 섞어주면 더 좋습니다.
-    teamA.sort(() => Math.random() - 0.5);
-    teamB.sort(() => Math.random() - 0.5);
-
-    // 화면 패널 보여주기
-    document.getElementById('no-result').classList.add('hidden');
-    document.getElementById('result-panel').classList.remove('hidden');
-
-    // 화면에 출력
-    renderTeam('team-a', teamA, 'text-blue-300');
-    renderTeam('team-b', teamB, 'text-red-300');
-}
-
-        function renderTeam(elementId, members, colorClass) {
+        function renderList(elementId, members, colorClass, bgClass) {
             const el = document.getElementById(elementId);
             el.innerHTML = members.map((m, index) => `
-                <li class="flex items-center gap-3 bg-[#0d131f] p-3 rounded-lg border border-gray-800">
-                    <span class="text-gray-600 font-mono text-sm">${index + 1}</span>
-                    <span class="w-2 h-2 rounded-full ${colorClass.replace('text','bg')}-500"></span>
-                    <span class="font-bold ${colorClass}">${m}</span>
+                <li class="flex flex-col bg-[#0d131f] p-4 rounded-xl border border-gray-800 hover:border-gray-600 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs text-gray-600 font-mono">${index + 1}</span>
+                            <span class="w-2 h-2 rounded-full ${bgClass} shadow-[0_0_8px_rgba(255,255,255,0.5)]"></span>
+                            <span class="font-bold ${colorClass} text-lg tracking-tight">${m.name}</span>
+                        </div>
+                    </div>
+                    <div class="mt-2 ml-7 text-[10px] text-gray-500 flex items-center gap-2">
+                        <span class="bg-gray-800 px-1.5 py-0.5 rounded text-gray-400">RIVAL</span>
+                        <span class="italic">vs ${m.rival}</span>
+                    </div>
                 </li>
             `).join('');
         }
