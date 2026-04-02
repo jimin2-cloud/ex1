@@ -1,45 +1,186 @@
-<div class="mt-8 p-6 bg-white rounded-lg shadow">
-    <h3 class="text-lg font-bold mb-4">랜덤 팀 구성하기 (5:5)</h3>
-    <textarea id="name-input" class="w-full p-2 border rounded" placeholder="이름을 쉼표로 구분해서 10명 입력하세요 (예: 다오,배찌,디지니...)"></textarea>
-    <button onclick="generateTeams()" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">팀 나누기</button>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카트라이더 팀 매칭 시스템</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #0a0e17; /* 아주 어두운 파랑 (Cyberpunk base) */
+            color: #e0e6ed;
+        }
+        .cyber-panel {
+            background: rgba(20, 27, 45, 0.8);
+            border: 1px solid #1f293a;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.1);
+        }
+        .neon-input:focus {
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+            border-color: #00f2fe;
+        }
+        .neon-btn {
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+            transition: all 0.3s ease;
+        }
+        .neon-btn:hover {
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.8);
+            transform: translateY(-2px);
+        }
+        /* 팀 등장 애니메이션 */
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .team-card {
+            animation: fadeInScale 0.5s ease-out forwards;
+        }
+        .team-a-glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); border-color: #3b82f6; }
+        .team-b-glow { box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); border-color: #ef4444; }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 md:p-8">
 
-    <div class="grid grid-cols-2 gap-4 mt-4">
-        <div class="p-4 bg-blue-50 rounded">
-            <h4 class="font-bold text-blue-700">A팀</h4>
-            <ul id="team-a" class="list-disc ml-5"></ul>
+    <div class="text-center mb-10 w-full max-w-4xl">
+        <div class="inline-block bg-blue-900/30 text-blue-300 text-xs px-3 py-1 rounded-full mb-2 border border-blue-800">
+            AUTO TEAM MATCHING v1.0
         </div>
-        <div class="p-4 bg-red-50 rounded">
-            <h4 class="font-bold text-red-700">B팀</h4>
-            <ul id="team-b" class="list-disc ml-5"></ul>
-        </div>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-500 tracking-tight">
+            카트 팀 매칭
+        </h1>
+        <p class="text-gray-400 mt-2 text-lg">10명의 라이더를 입력하고 랜덤 팀을 구성하세요.</p>
     </div>
-</div>
 
-<script>
-function generateTeams() {
-    const input = document.getElementById('name-input').value;
-    // 쉼표로 구분하고 공백 제거
-    let names = input.split(',').map(name => name.trim()).filter(name => name !== "");
+    <div class="w-full max-w-5xl flex flex-col gap-8">
 
-    if (names.length !== 10) {
-        alert("정확히 10명의 이름을 입력해주세요! (현재 " + names.length + "명)");
-        return;
-    }
+        <div class="cyber-panel rounded-2xl p-6 md:p-8">
+            <div class="flex flex-col md:flex-row gap-6 items-start">
+                <div class="flex-grow w-full">
+                    <label for="name-input" class="block text-sm font-medium text-cyan-300 mb-2">라이더 명단 입력 (쉼표 구분)</label>
+                    <textarea id="name-input" rows="3" 
+                        class="neon-input w-full bg-[#0d131f] border border-gray-700 rounded-xl p-4 text-white placeholder-gray-600 focus:ring-0"
+                        placeholder="예: 다오, 배찌, 디지니, 마리드, 우니, 에띠, 모스, 케피, 타키, 라비">다오, 배찌, 디지니, 마리드, 우니, 에띠, 모스, 케피, 타키, 라비</textarea>
+                </div>
+                <div class="w-full md:w-auto md:self-end">
+                    <button onclick="generateTeams()" 
+                        class="neon-btn w-full md:w-auto text-black font-bold py-4 px-10 rounded-xl text-lg flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-1.912.956a11.963 11.963 0 01-4.212-4.212l.956-1.912a6 6 0 00.517-3.86l-.477-2.387a2 2 0 00-.547-1.022L12 11l7.428 4.428z"></path></svg>
+                        팀 구성하기
+                    </button>
+                </div>
+            </div>
+            <div id="status-msg" class="text-sm text-gray-500 mt-3 text-center md:text-left">현재 쉼표로 구분된 10명의 이름이 필요합니다.</div>
+        </div>
 
-    // 배열 무작위 섞기
-    names.sort(() => Math.random() - 0.5);
+        <div id="result-panel" class="hidden grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <div class="cyber-panel team-card team-a-glow rounded-2xl overflow-hidden">
+                <div class="bg-blue-600/20 px-6 py-4 border-b border-blue-900 flex items-center justify-between">
+                    <h3 class="text-2xl font-bold text-blue-300 tracking-wider">TEAM BLUE</h3>
+                    <span class="text-sm bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full border border-blue-800">5 RIDERS</span>
+                </div>
+                <div class="p-6">
+                    <ul id="team-a" class="space-y-3 text-lg">
+                        </ul>
+                </div>
+            </div>
 
-    // 팀 배정
-    const teamA = names.slice(0, 5);
-    const teamB = names.slice(5, 10);
+            <div class="cyber-panel team-card team-b-glow rounded-2xl overflow-hidden" style="animation-delay: 0.2s;">
+                <div class="bg-red-600/20 px-6 py-4 border-b border-red-900 flex items-center justify-between">
+                    <h3 class="text-2xl font-bold text-red-300 tracking-wider">TEAM RED</h3>
+                    <span class="text-sm bg-red-500/20 text-red-300 px-3 py-1 rounded-full border border-red-800">5 RIDERS</span>
+                </div>
+                <div class="p-6">
+                    <ul id="team-b" class="space-y-3 text-lg">
+                        </ul>
+                </div>
+            </div>
 
-    // 화면에 출력
-    renderTeam('team-a', teamA);
-    renderTeam('team-b', teamB);
-}
+        </div>
 
-function renderTeam(elementId, members) {
-    const el = document.getElementById(elementId);
-    el.innerHTML = members.map(m => `<li>${m}</li>`).join('');
-}
-</script>
+        <div id="no-result" class="cyber-panel rounded-2xl p-10 text-center text-gray-600">
+            <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <p>라이더 이름을 입력하고 '팀 구성하기' 버튼을 누르면 매칭 결과가 여기에 표시됩니다.</p>
+        </div>
+
+    </div>
+
+    <footer class="mt-16 text-center text-gray-700 text-xs w-full max-w-4xl border-t border-gray-800 pt-6">
+        © 2026 Jimin2-Cloud Auto Matchmaker. Powered by 브라우저 자바스크립트.
+    </footer>
+
+    <script>
+        // 폰트가 로드된 후 화면을 보여주기 위해 약간의 지연을 줍니다.
+        window.onload = function() {
+            // 초기 입력값 인원수 확인
+            checkCount();
+        }
+
+        // 입력할 때마다 인원수 체크
+        document.getElementById('name-input').addEventListener('input', checkCount);
+
+        function checkCount() {
+            const input = document.getElementById('name-input').value;
+            let names = input.split(',').map(name => name.trim()).filter(n => n !== "");
+            const msgEl = document.getElementById('status-msg');
+            
+            if (names.length === 10) {
+                msgEl.textContent = `현재 10명이 정확히 입력되었습니다! (OK)`;
+                msgEl.className = "text-sm text-green-400 mt-3";
+            } else {
+                msgEl.textContent = `현재 ${names.length}명 입력되었습니다. (10명이 필요합니다)`;
+                msgEl.className = "text-sm text-yellow-500 mt-3";
+            }
+        }
+
+        function generateTeams() {
+            const input = document.getElementById('name-input').value;
+            let names = input.split(',').map(name => name.trim()).filter(n => n !== "");
+
+            if (names.length !== 10) {
+                alert("팀을 구성하려면 정확히 10명의 라이더 이름이 필요합니다!");
+                return;
+            }
+
+            // 배열 무작위 섞기 (Fisher-Yates 알고리즘)
+            for (let i = names.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [names[i], names[j]] = [names[j], names[i]];
+            }
+
+            // 팀 배정
+            const teamA = names.slice(0, 5);
+            const teamB = names.slice(5, 10);
+
+            // 화면 패널 전환
+            document.getElementById('no-result').classList.add('hidden');
+            const resultPanel = document.getElementById('result-panel');
+            resultPanel.classList.remove('hidden');
+
+            // 애니메이션 초기화를 위해 클래스를 뗐다 붙임
+            resultPanel.querySelectorAll('.team-card').forEach(card => {
+                card.style.animation = 'none';
+                card.offsetHeight; /* 강제 리플로우 */
+                card.style.animation = null; 
+            });
+
+            // 화면에 출력 (멋진 리스트 아이콘 추가)
+            renderTeam('team-a', teamA, 'text-blue-300');
+            renderTeam('team-b', teamB, 'text-red-300');
+        }
+
+        function renderTeam(elementId, members, colorClass) {
+            const el = document.getElementById(elementId);
+            el.innerHTML = members.map((m, index) => `
+                <li class="flex items-center gap-3 bg-[#0d131f] p-3 rounded-lg border border-gray-800">
+                    <span class="text-gray-600 font-mono text-sm">${index + 1}</span>
+                    <span class="w-2 h-2 rounded-full ${colorClass.replace('text','bg')}-500"></span>
+                    <span class="font-bold ${colorClass}">${m}</span>
+                </li>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
